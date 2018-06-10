@@ -1,0 +1,28 @@
+#!/usr/bin/expect 
+set host_name [lindex $argv 0]
+
+#登陆堡垒机
+spawn goto manage_prod 
+expect "USMshell*" 
+send "cd 2\r"
+expect "USMshell*"
+send "open 6\r"
+switch $host_name {
+    "prod_proxy2" { send "open 1\r" }
+    "prod_data" { send "open 2\r" }
+    "prod_web1" { send "open 3\r" }
+    "prod_docker_web" { send "open 4\r" }
+    "prod_web2" { send "open 5\r" }   
+    "prod_docker_data" { send "open 7\r" } 
+    "prod_proxy1" { send "open 8\r" }
+    "prod_act_web1" { send "open 9\r" } 
+    "prod_act_web2" { send "open 10\r" }
+    "prod_manage" { send "open 11\r" }
+    "prod_solr1" { send "open 12\r" }
+     default {
+        puts "没有找到该服务器"
+        exit 1 
+     }
+}
+interact
+

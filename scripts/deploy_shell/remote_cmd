@@ -1,0 +1,11 @@
+#!/bin/bash
+##################################
+#Created  :2018-05-05
+#Version  :V1.0
+#Author   :wenxiaobin
+#Email    :wenxb01@mingyuanyun.com
+##################################
+
+ssh -T user1@$1 << EOF
+$2
+EOF

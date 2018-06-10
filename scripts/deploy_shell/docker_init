@@ -1,0 +1,38 @@
+#!/bin/bash
+##################################
+#Created  :2018-05-05
+#Version  :V1.0
+#Author   :wenxiaobin
+#Email    :wenxb01@mingyuanyun.com
+##################################
+
+source /www/sh/error_prompt
+
+# env initialization
+DIR=`find ./  -maxdepth 2 -name env_file`
+
+if [ ! -z "${DIR}" ];then
+    for sub_dir in ${DIR};do
+        DIRNAME=`dirname ${sub_dir}`
+        \cp -rf ${sub_dir} ${DIRNAME}/.env
+        sed -i "s/\(HOST_IP=\).*/\1${REMOTE_IP}/g" ${DIRNAME}/.env
+        sed -i "s/\(WEB_SERVER_1=\).*/\1${REMOTE_IP}/g" ${DIRNAME}/.env
+        sed -i "s/\(WEB_SERVER_2=\).*/\1${REMOTE_IP}/g" ${DIRNAME}/.env
+    done
+    green "docker initialization successed,初始化成功"
+else
+    yellow "not found docker config file ,docker don't initialization,无需初始化"
+fi
+
+# node json initialization
+JSON_FILE=pm2-test.json
+JSON_DIR=`find ./  -maxdepth 3 -name ${JSON_FILE}`
+if [ ! -z "${JSON_DIR}" ];then
+    for sub_json in ${JSON_DIR};do
+        JSON_DIRNAME=`dirname ${sub_json}`
+        \cp -rf ${sub_json} ${JSON_DIRNAME}/pm2.json
+        green "docker node json initialization successed,File $sub_json to ${JSON_DIRNAME}/pm2.json,初始化成功"
+    done
+else
+    yellow "not found docker node config file ,docker node don't initialization，无需初始化"
+fi

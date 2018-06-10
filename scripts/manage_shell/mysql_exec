@@ -1,0 +1,41 @@
+#!/bin/bash
+##################################
+#Created :2018-06-03
+#Version :V1.0
+#Author :wenxiaobin
+#Email :wenxb01@mingyuanyun.com
+##################################
+
+source /usr/local/bin/error_prompt
+
+##数据库连接配置
+DBHOST="10.5.22.67"
+DBPORT=60001
+DBUSER=machine
+DBPW=machine123
+DBNAME=person
+
+if [[ ! -z "$1" ]];then
+    DBSQL="${1}"
+else
+    red "请传入查询语句参数"
+fi
+
+function execSQL()
+{
+    result=`mysql -h"${DBHOST}" -P"${DBPORT}" -u"${DBUSER}" -p"${DBPW}" -D"$1" -e"$2"`
+    yellow "mysql -h\"${DBHOST}\" -P\"${DBPORT}\" -u\"${DBUSER}\" -p\"${DBPW}\" -D\"$1\" -e\"$2\""
+    if [ $? -ne 0 ]; then
+        yellow "读取表失败"
+        exit 1
+    elif [[ -z "${result}" ]];then
+        yellow "该环境没有服务器"
+        exit 2
+    fi
+  # echo "$result"
+}
+
+#执行SQL
+echo "${DBSQL}"
+execSQL "${DBNAME}" "${DBSQL}"
+

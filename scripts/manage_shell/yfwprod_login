@@ -1,0 +1,13 @@
+#!/usr/bin/expect 
+set host_name [lindex $argv 0]
+puts $host_name
+#登陆堡垒机
+spawn goto manage_prod 
+expect "USMshell*" 
+send "cd 1\r"
+expect "USMshell*" 
+send "open 6\r"
+expect "*manager-server*"
+send "ssh $host_name\r"
+interact
+

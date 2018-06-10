@@ -1,0 +1,61 @@
+#!/bin/bash
+##################################
+#Created :2018-06-03
+#Version :V1.0
+#Author :wenxiaobin
+#Email :wenxb01@mingyuanyun.com
+##################################
+
+source /usr/local/bin/error_prompt
+##数据库连接配置
+DBHOST="10.5.22.67"
+DBPORT=60001
+DBUSER=machine
+DBPW=machine123
+DBNAME=person
+if [[ -z "$1" ]];then
+    yellow "所有环境服务器列表"
+    DBSQL="SELECT id,host_name,host_inner_ip,host_outer_ip FROM machine"
+else
+    yellow "${1}环境服务器列表"
+    DBSQL="SELECT id,host_name,host_inner_ip,host_outer_ip FROM machine WHERE envirement=\"$1\""
+fi
+
+function execSQL()
+{
+    result=`mysql -h"${DBHOST}" -P"${DBPORT}" -u"${DBUSER}" -p"${DBPW}" -D"$1" -e"$2"`
+    if [ $? -ne 0 ]; then  
+        yellow "读取表失败"  
+        exit 1 
+    elif [[ -z "${result}" ]];then
+        yellow "该环境没有服务器"
+        exit 2 
+    fi
+  # echo "$result"
+}
+
+#执行SQL
+execSQL "${DBNAME}" "${DBSQL}"
+#格式化输出
+function format_put()
+{
+    echo "$1" |awk 'NR==1 {printf"\033[1;30;42m%-5s%-20s%-20s%-20s\033[0m\n",$1,$2,$3,$4}'
+    echo "$1" |awk 'NR>1 {printf"%-5s%-20s%-20s%-20s\n",$1,$2,$3,$4}'
+}
+
+while true 
+do
+    format_put "$result"
+    read -e -p "input your select number: " value
+    if [[ "$value" = "exit" ]];then
+        blue "已退出"
+        exit 
+    fi
+    hostname=`echo "$result" | awk "NR==$value+1 {print}"|awk '{print$2}'`
+    if [[ ! -z "${hostname}" ]];then
+        goto $hostname
+        break
+    else
+        yellow "${value}菜单没有，请从新选择"
+    fi
+done

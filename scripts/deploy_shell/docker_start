@@ -1,0 +1,25 @@
+#!/bin/bash
+##################################
+#Created :2018-05-05
+#Version :V1.0
+#Author  :wenxiaobin
+#Email   :wenxb01@mingyuanyun.com
+##################################
+
+source /www/sh/error_prompt
+
+DOWN="sudo docker-compose down"
+UP="sudo docker-compose up -d"
+
+if [[ $# -eq 1 ]];then
+    START_DIR=${1}
+    echo cd ${START_DIR}
+    /www/sh/remote_cmd $REMOTE_IP "cd ${START_DIR} && ${DOWN} && ${UP}"
+    if [ $? -eq 0 ];then
+        blue "docker 启动成功"
+    else
+        red "docker 启动失败"
+    fi
+else
+    red "您的输入有误\nUsage: $0 Start directory path"
+fi

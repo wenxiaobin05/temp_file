@@ -1,0 +1,26 @@
+#!/bin/bash
+##################################
+#Created :2018-06-04
+#Version :V1.0
+#Author :wenxiaobin
+#Email :wenxb01@mingyuanyun.com
+##################################
+
+FILE_PATH=/usr/local/bin/insert.txt
+
+if [[ -s ${FILE_PATH} ]];then
+    cat ${FILE_PATH} | while read line;do
+        HOST_NAME=`echo ${line} | awk '{print$1}'`
+        HOST_INNER_IP=`echo ${line} | awk '{print$2}'`
+        HOST_OUTER_IP=`echo ${line} | awk '{print$3}'`
+        PORT=`echo ${line} | awk '{print$4}'`
+        SSH=`echo ${line} | awk '{print$5}'`
+        USER_NAME=`echo ${line} | awk '{print$6}'`
+        ENVIREMENT=`echo ${line} | awk '{print$7}'`
+        DBSQL="INSERT INTO machine (host_name, host_inner_ip, host_outer_ip, port, protocol, user_name, envirement) VALUES (\"${HOST_NAME}\", \"${HOST_INNER_IP}\", \"${HOST_OUTER_IP}\", \"${PORT}\", \"${SSH}\", \"${USER_NAME}\", \"${ENVIREMENT}\");commit;"
+        mysql_exec "${DBSQL}"
+    done
+else
+    echo "更新的SQL文本不存在或为空"
+fi
+cat /dev/null >${FILE_PATH}

@@ -1,0 +1,19 @@
+#!/bin/bash
+##################################
+#Created  :2018-05-21
+#Version  :V1.0
+#Author   :wenxiaobin
+#Email    :wenxb01@mingyuanyun.com
+##################################
+ip=$1
+dir=$2
+if [ -z "$ip" -o -z "$dir" ];then
+    echo "input error"
+    echo "Usage:/www/sh/create_dir ip_addr dirname"
+else
+    if ssh -T $ip test -e $dir;then
+        echo "filename already exists,don't need create"
+    else
+         ssh $ip " mkdir -p $2"
+    fi
+fi
